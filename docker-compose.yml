@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Servicio de MySQL 8.0
+  db:
+    image: mysql:8.0 # Imagen oficial de MySQL 8.0
+    container_name: mysql-dev
+    restart: unless-stopped
+    environment:
+      # *** Importante: Cambia estas variables por tus valores seguros ***
+      MYSQL_ROOT_PASSWORD: apu2008 # Contraseña del usuario 'root' de MySQL
+      MYSQL_DATABASE: logistica_test # Nombre de una BD que se creará automáticamente
+      MYSQL_USER: devuser # Usuario para el login de phpMyAdmin
+      MYSQL_PASSWORD: devpass # Contraseña para el usuario
+      # Para MySQL 8.0, a veces necesitas cambiar el plugin de autenticación para que phpMyAdmin no tenga problemas
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' # Solo si estás en desarrollo, sino bórralo
+    ports:
+      - "3306:3306" # Puerto de MySQL (Opcional, solo si quieres acceder desde tu host)
+    volumes:
+      - dbdata:/var/lib/mysql # Persistencia de datos
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    command: ['mysqld', '--default-authentication-plugin=mysql_native_password'] # Comando para compatibilidad en MySQL 8
+
+  # Servicio de phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin # Imagen oficial de phpMyAdmin
+    container_name: phpmyadmin-pma
+    restart: unless-stopped
+    depends_on:
+      - db # Asegura que MySQL arranque antes que phpMyAdmin
+    ports:
+      - "9090:80" # Accede a phpMyAdmin en http://localhost:8080
+    environment:
+      PMA_HOST: db # Nombre del servicio de MySQL dentro de la red Docker
+      PMA_PORT: 3306
+      # Opcionalmente, puedes establecer el usuario por defecto para el login:
+      # PMA_USER: root
+      # PMA_PASSWORD: mi_super_password_root
+      # Si no los pones, te pedirá el login en la web (¡lo que quieres!)
+
+volumes:
+  dbdata:

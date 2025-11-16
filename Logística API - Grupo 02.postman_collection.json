@@ -1,0 +1,2844 @@
+{
+	"info": {
+		"_postman_id": "6414ba2f-f591-44f1-9942-7fdf8f066f42",
+		"name": "Logística API - Grupo 02",
+		"description": "API para gestión de clientes, vehículos, paquetes y envíos\nde una empresa de logística.\n\nFlujo típico de uso:\n\n1) Clientes\n   - Dar de alta remitentes y destinatarios.\n   - Endpoint principal: /api/clientes\n\n2) Paquetes\n   - Registrar paquetes frágiles y refrigerados.\n   - Convención de códigos en los datos de ejemplo:\n     • PF-...  → Paquetes frágiles (FRAGIL)\n     • PR-...  → Paquetes refrigerados (REFRIGERADO)\n   - Endpoint principal: /api/paquetes\n\n3) Envíos\n   - Crear un envío indicando:\n     • Documento/CUIT del remitente y destinatario,\n     • Lista de códigos de paquete (PF-..., PR-...) ya registrados.\n   - Al crear el envío, se genera un código de seguimiento público\n     (por ejemplo: ICG-AB12CD34EF56).\n   - Endpoint principal: /api/envios\n\n4) Estados del envío\n   - Flujo normal:\n     GENERADO → EN_ALMACEN → EN_RUTA → (ENTREGADO o DEVUELTO)\n   - Cambios de estado:\n     • Ingreso a almacén\n     • Salida a ruta\n     • Entrega con comprobante (Base64)\n     • Cancelación / Devolución\n\n5) Tracking para el cliente final\n   - A partir del código público (ej: ICG-AB12CD34EF56),\n     se puede consultar el detalle del envío y toda la traza\n     de cambios de estado.\n   - Endpoint: GET /api/envios/seguimiento?tracking=...\n\n\nContact Support:\n Name: Equipo Grupo 02\n Email: gefestudiante2009@gmail.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12134724"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "clientes",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Obtener un cliente por su ID interno",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/clientes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clientes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "2601"
+												}
+											]
+										},
+										"description": "Devuelve todos los datos de un cliente a partir de su identificador interno."
+									},
+									"response": [
+										{
+											"name": "Cliente encontrado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:8080/api/clientes/:id",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"api",
+														"clientes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 10,\n  \"nombreRazonSocial\": \"EJESA SA\",\n  \"documentoCuit\": \"string\",\n  \"telefono\": \"+543884001122\",\n  \"email\": \"contacto@ejesa.com\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\"\n}"
+										},
+										{
+											"name": "No se encontró un cliente con el ID indicado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/clientes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clientes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Actualizar datos de contacto y dirección de un cliente",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"telefono\": \"+543884009999\",\n  \"email\": \"nuevo_correo@example.com\",\n  \"direccionPrincipal\": \"Calle Belgrano 512\",\n  \"codigoPostal\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/clientes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clientes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "2601"
+												}
+											]
+										},
+										"description": "Permite actualizar teléfono, email y domicilio de un cliente existente.\nEl documento/CUIT no se modifica mediante este endpoint.\n"
+									},
+									"response": [
+										{
+											"name": "Cliente actualizado correctamente",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"telefono\": \"+543884009999\",\n  \"email\": \"nuevo_correo@example.com\",\n  \"direccionPrincipal\": \"Calle Belgrano 512\",\n  \"codigoPostal\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/api/clientes/:id",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"api",
+														"clientes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 10,\n  \"nombreRazonSocial\": \"EJESA SA\",\n  \"documentoCuit\": \"string\",\n  \"telefono\": \"+543884001122\",\n  \"email\": \"contacto@ejesa.com\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\"\n}"
+										},
+										{
+											"name": "Datos inválidos (errores de validación en el cuerpo de la petición)",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"telefono\": \"+543884009999\",\n  \"email\": \"nuevo_correo@example.com\",\n  \"direccionPrincipal\": \"Calle Belgrano 512\",\n  \"codigoPostal\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/clientes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clientes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "No se encontró un cliente con el identificador indicado",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"telefono\": \"+543884009999\",\n  \"email\": \"nuevo_correo@example.com\",\n  \"direccionPrincipal\": \"Calle Belgrano 512\",\n  \"codigoPostal\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/clientes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clientes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Listar clientes (con búsqueda opcional por documento/CUIT)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/clientes?documento=30333333",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"clientes"
+									],
+									"query": [
+										{
+											"key": "documento",
+											"value": "30333333",
+											"description": "Documento/CUIT completo o parcial. Ej: '307000', '2330', etc."
+										}
+									]
+								},
+								"description": "Si no se envía el parámetro 'documento', devuelve el listado completo de clientes.\nSi se envía, devuelve solo los clientes cuyo documento/CUIT contenga el valor indicado.\nEsto permite usarlo como buscador/autocompletar en un formulario.\n"
+							},
+							"response": [
+								{
+									"name": "Listado de clientes (completo o filtrado)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/clientes?documento=30333333",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"clientes"
+											],
+											"query": [
+												{
+													"key": "documento",
+													"value": "30333333",
+													"description": "Documento/CUIT completo o parcial. Ej: '307000', '2330', etc."
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 10,\n  \"nombreRazonSocial\": \"EJESA SA\",\n  \"documentoCuit\": \"string\",\n  \"telefono\": \"+543884001122\",\n  \"email\": \"contacto@ejesa.com\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Crear cliente",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"codigoPostal\": \"string\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"documentoCuit\": \"string\",\n  \"nombreRazonSocial\": \"Mariano Márquez\",\n  \"telefono\": \"+543884001123\",\n  \"email\": \"cliente@example.com\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/clientes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"clientes"
+									]
+								},
+								"description": "Registra un nuevo cliente (remitente o destinatario) en el sistema.\nEl documento/CUIT debe ser único: si ya existe, la operación será rechazada.\n"
+							},
+							"response": [
+								{
+									"name": "Cliente creado correctamente",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"codigoPostal\": \"string\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"documentoCuit\": \"string\",\n  \"nombreRazonSocial\": \"Mariano Márquez\",\n  \"telefono\": \"+543884001123\",\n  \"email\": \"cliente@example.com\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/clientes",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"clientes"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 10,\n  \"nombreRazonSocial\": \"EJESA SA\",\n  \"documentoCuit\": \"string\",\n  \"telefono\": \"+543884001122\",\n  \"email\": \"contacto@ejesa.com\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\"\n}"
+								},
+								{
+									"name": "Datos inválidos (errores de validación en el cuerpo de la petición)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"codigoPostal\": \"string\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"documentoCuit\": \"string\",\n  \"nombreRazonSocial\": \"Mariano Márquez\",\n  \"telefono\": \"+543884001123\",\n  \"email\": \"cliente@example.com\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/clientes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clientes"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ya existe un cliente con el mismo documento/CUIT",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"codigoPostal\": \"string\",\n  \"direccionPrincipal\": \"Av. Sarmiento 123\",\n  \"documentoCuit\": \"string\",\n  \"nombreRazonSocial\": \"Mariano Márquez\",\n  \"telefono\": \"+543884001123\",\n  \"email\": \"cliente@example.com\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/clientes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clientes"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Endpoints para administrar remitentes y destinatarios: alta, actualización, búsqueda por documento/CUIT y listado general.\n\nUsar primero esta sección para crear los clientes que luego se usan en Envíos."
+				},
+				{
+					"name": "vehiculos",
+					"item": [
+						{
+							"name": "buscar",
+							"item": [
+								{
+									"name": "Buscar vehículos con filtros avanzados",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/vehiculos/buscar?refrigerado=false&capacidadPesoMin=7359.24934694679&capacidadPesoMax=7359.24934694679&capacidadVolumenMin=7359.24934694679&capacidadVolumenMax=7359.24934694679&tempMin=7359.24934694679&tempMax=7359.24934694679",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"buscar"
+											],
+											"query": [
+												{
+													"key": "refrigerado",
+													"value": "false",
+													"description": "Indica si el vehículo debe ser refrigerado (true/false)."
+												},
+												{
+													"key": "capacidadPesoMin",
+													"value": "7359.24934694679",
+													"description": "Peso mínimo soportado en kg."
+												},
+												{
+													"key": "capacidadPesoMax",
+													"value": "7359.24934694679",
+													"description": "Peso máximoo soportado en kg."
+												},
+												{
+													"key": "capacidadVolumenMin",
+													"value": "7359.24934694679",
+													"description": "Volumen mínimo soportado en dm3."
+												},
+												{
+													"key": "capacidadVolumenMax",
+													"value": "7359.24934694679",
+													"description": "Volumen máximo soportado en dm3."
+												},
+												{
+													"key": "tempMin",
+													"value": "7359.24934694679",
+													"description": "Temperatura mínima requerida (solo aplica a vehículos refrigerados)."
+												},
+												{
+													"key": "tempMax",
+													"value": "7359.24934694679",
+													"description": "Temperatura máxima requerida (solo aplica a vehículos refrigerados)."
+												}
+											]
+										},
+										"description": "Permite filtrar vehículos combinando distintos criterios.\nTodos los parámetros son opcionales:\n- refrigerado: true/false para indicar si el vehículo debe ser refrigerado.\n- capacidadPesoMin / capacidadVolumenMin: capacidad mínima requerida (peso en kg, volumen en dm3).\n- tempMin / tempMax: rango de temperatura requerido para envíos refrigerados.\n\nSi no se envía ningún parámetro, el resultado es equivalente a listar todos los vehículos.\n"
+									},
+									"response": [
+										{
+											"name": "Listado de vehículos que cumplen los filtros solicitados",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:8080/api/vehiculos/buscar?refrigerado=false&capacidadPesoMin=7359.24934694679&capacidadPesoMax=7359.24934694679&capacidadVolumenMin=7359.24934694679&capacidadVolumenMax=7359.24934694679&tempMin=7359.24934694679&tempMax=7359.24934694679",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"api",
+														"vehiculos",
+														"buscar"
+													],
+													"query": [
+														{
+															"key": "refrigerado",
+															"value": "false",
+															"description": "Indica si el vehículo debe ser refrigerado (true/false)."
+														},
+														{
+															"key": "capacidadPesoMin",
+															"value": "7359.24934694679",
+															"description": "Peso mínimo soportado en kg."
+														},
+														{
+															"key": "capacidadPesoMax",
+															"value": "7359.24934694679",
+															"description": "Peso máximoo soportado en kg."
+														},
+														{
+															"key": "capacidadVolumenMin",
+															"value": "7359.24934694679",
+															"description": "Volumen mínimo soportado en dm3."
+														},
+														{
+															"key": "capacidadVolumenMax",
+															"value": "7359.24934694679",
+															"description": "Volumen máximo soportado en dm3."
+														},
+														{
+															"key": "tempMin",
+															"value": "7359.24934694679",
+															"description": "Temperatura mínima requerida (solo aplica a vehículos refrigerados)."
+														},
+														{
+															"key": "tempMax",
+															"value": "7359.24934694679",
+															"description": "Temperatura máxima requerida (solo aplica a vehículos refrigerados)."
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 3,\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}"
+										},
+										{
+											"name": "Parámetros inconsistentes (por ejemplo, tempMin mayor que tempMax)",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/vehiculos/buscar?refrigerado=false&capacidadPesoMin=7359.24934694679&capacidadPesoMax=7359.24934694679&capacidadVolumenMin=7359.24934694679&capacidadVolumenMax=7359.24934694679&tempMin=7359.24934694679&tempMax=7359.24934694679",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"vehiculos",
+														"buscar"
+													],
+													"query": [
+														{
+															"key": "refrigerado",
+															"value": "false",
+															"description": "Indica si el vehículo debe ser refrigerado (true/false)."
+														},
+														{
+															"key": "capacidadPesoMin",
+															"value": "7359.24934694679",
+															"description": "Peso mínimo soportado en kg."
+														},
+														{
+															"key": "capacidadPesoMax",
+															"value": "7359.24934694679",
+															"description": "Peso máximoo soportado en kg."
+														},
+														{
+															"key": "capacidadVolumenMin",
+															"value": "7359.24934694679",
+															"description": "Volumen mínimo soportado en dm3."
+														},
+														{
+															"key": "capacidadVolumenMax",
+															"value": "7359.24934694679",
+															"description": "Volumen máximo soportado en dm3."
+														},
+														{
+															"key": "tempMin",
+															"value": "7359.24934694679",
+															"description": "Temperatura mínima requerida (solo aplica a vehículos refrigerados)."
+														},
+														{
+															"key": "tempMax",
+															"value": "7359.24934694679",
+															"description": "Temperatura máxima requerida (solo aplica a vehículos refrigerados)."
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Listar vehículos (con búsqueda opcional por patente)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/vehiculos?patente=BB222BB",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"vehiculos"
+									],
+									"query": [
+										{
+											"key": "patente",
+											"value": "BB222BB",
+											"description": "Patente completa o parcial del vehículo. Si se omite, se devuelven todos."
+										}
+									]
+								},
+								"description": "Si no se envía el parámetro 'patente', devuelve todos los vehículos registrados.\nSi se envía, devuelve solo los vehículos cuya patente contenga el texto indicado\n(búsqueda parcial, no exacta). Útil para buscadores o autocompletado.\n"
+							},
+							"response": [
+								{
+									"name": "Listado de vehículos (completo o filtrado)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/vehiculos?patente=BB222BB",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"vehiculos"
+											],
+											"query": [
+												{
+													"key": "patente",
+													"value": "BB222BB",
+													"description": "Patente completa o parcial del vehículo. Si se omite, se devuelven todos."
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 3,\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}"
+								}
+							]
+						},
+						{
+							"name": "Crear vehículo",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/vehiculos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"vehiculos"
+									]
+								},
+								"description": "Registra un nuevo vehículo de reparto.\nSi el vehículo es refrigerado, se debe informar el rango de temperatura que soporta.\nLa patente no puede estar repetida.\n"
+							},
+							"response": [
+								{
+									"name": "Vehículo creado correctamente",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/vehiculos",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"vehiculos"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 3,\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}"
+								},
+								{
+									"name": "Datos inválidos (errores de validación en el cuerpo de la petición)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/vehiculos",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"vehiculos"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ya existe un vehículo con la misma patente",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"patente\": \"AA123BB\",\n  \"capacidadPesoKg\": 5000,\n  \"capacidadVolumenDm3\": 15,\n  \"refrigerado\": true,\n  \"rangoTempMin\": -2,\n  \"rangoTempMax\": 6\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/vehiculos",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"vehiculos"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Endpoints para registrar y buscar vehículos de reparto (refrigerados o no).  \n  \nPermite filtrar por refrigerado, capacidad de carga y rango de temperatura.  \n  \nLos vehículos se usan al crear rutas."
+				},
+				{
+					"name": "rutas",
+					"item": [
+						{
+							"name": "{rutaId}",
+							"item": [
+								{
+									"name": "envios",
+									"item": [
+										{
+											"name": "quitar",
+											"item": [
+												{
+													"name": "Quitar uno o varios envíos de una ruta",
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"enviosIds\": [\n    1,\n    2\n  ],\n  \"observacion\": \"Reprogramación de entrega\"\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/rutas/:rutaId/envios/quitar",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"rutas",
+																":rutaId",
+																"envios",
+																"quitar"
+															],
+															"variable": [
+																{
+																	"key": "rutaId",
+																	"value": "2601"
+																}
+															]
+														},
+														"description": "Quita los envíos indicados de la ruta.\nOpcionalmente se puede enviar una observación para dejar registro del motivo\n(por ejemplo, reprogramación, error de carga, cancelación, etc.).\n"
+													},
+													"response": [
+														{
+															"name": "OK",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "*/*"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"enviosIds\": [\n    1,\n    2\n  ],\n  \"observacion\": \"Reprogramación de entrega\"\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "http://localhost:8080/api/rutas/:rutaId/envios/quitar",
+																	"protocol": "http",
+																	"host": [
+																		"localhost"
+																	],
+																	"port": "8080",
+																	"path": [
+																		"api",
+																		"rutas",
+																		":rutaId",
+																		"envios",
+																		"quitar"
+																	],
+																	"variable": [
+																		{
+																			"key": "rutaId"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "*/*"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"id\": 7,\n  \"fecha\": \"2025-11-10\",\n  \"vehiculoId\": 3,\n  \"enviosIds\": [\n    10,\n    11,\n    15\n  ]\n}"
+														}
+													]
+												}
+											]
+										},
+										{
+											"name": "Consultar envíos asignados a una ruta en una fecha",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/rutas/:rutaId/envios?fecha=2025-11-20",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"rutas",
+														":rutaId",
+														"envios"
+													],
+													"query": [
+														{
+															"key": "fecha",
+															"value": "2025-11-20",
+															"description": "Fecha de la ruta a consultar"
+														}
+													],
+													"variable": [
+														{
+															"key": "rutaId",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Devuelve el detalle de los envíos asociados a la ruta indicada,\npero solo si coinciden con la fecha solicitada.\nSi la ruta existe pero la fecha no coincide, se devuelve una lista vacía.\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"url": {
+															"raw": "http://localhost:8080/api/rutas/:rutaId/envios?fecha=2025-11-20",
+															"protocol": "http",
+															"host": [
+																"localhost"
+															],
+															"port": "8080",
+															"path": [
+																"api",
+																"rutas",
+																":rutaId",
+																"envios"
+															],
+															"query": [
+																{
+																	"key": "fecha",
+																	"value": "2025-11-20",
+																	"description": "Fecha de la ruta a consultar"
+																}
+															],
+															"variable": [
+																{
+																	"key": "rutaId"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "[\n  {\n    \"id\": 100,\n    \"remitenteId\": 1,\n    \"destinatarioId\": 2,\n    \"remitenteDocumento\": \"string\",\n    \"destinatarioDocumento\": \"string\",\n    \"direccionEntrega\": \"Av. Sarmiento 123\",\n    \"codigoPostal\": \"string\",\n    \"estadoActual\": \"EN_RUTA\",\n    \"rutaId\": 5,\n    \"paquetes\": [\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      },\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      }\n    ],\n    \"trackingCode\": \"PGM-AB12CD34EF56\",\n    \"requiereFrio\": true,\n    \"hasComprobante\": true\n  },\n  {\n    \"id\": 100,\n    \"remitenteId\": 1,\n    \"destinatarioId\": 2,\n    \"remitenteDocumento\": \"string\",\n    \"destinatarioDocumento\": \"string\",\n    \"direccionEntrega\": \"Av. Sarmiento 123\",\n    \"codigoPostal\": \"string\",\n    \"estadoActual\": \"EN_RUTA\",\n    \"rutaId\": 5,\n    \"paquetes\": [\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      },\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      }\n    ],\n    \"trackingCode\": \"PGM-AB12CD34EF56\",\n    \"requiereFrio\": true,\n    \"hasComprobante\": true\n  }\n]"
+												}
+											]
+										},
+										{
+											"name": "Asignar uno o varios envíos a una ruta",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"enviosIds\": [\n    1,\n    2,\n    3\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/rutas/:rutaId/envios",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"rutas",
+														":rutaId",
+														"envios"
+													],
+													"variable": [
+														{
+															"key": "rutaId",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Asigna una colección de envíos a la ruta indicada.\nAntes de asignarlos se valida:\n- que el vehículo tenga capacidad suficiente de peso y volumen, y\n- que sea compatible con los paquetes refrigerados, en caso de que existan.\nSi alguna validación falla, la operación se rechaza.\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"enviosIds\": [\n    1,\n    2,\n    3\n  ]\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "http://localhost:8080/api/rutas/:rutaId/envios",
+															"protocol": "http",
+															"host": [
+																"localhost"
+															],
+															"port": "8080",
+															"path": [
+																"api",
+																"rutas",
+																":rutaId",
+																"envios"
+															],
+															"variable": [
+																{
+																	"key": "rutaId"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": 7,\n  \"fecha\": \"2025-11-10\",\n  \"vehiculoId\": 3,\n  \"enviosIds\": [\n    10,\n    11,\n    15\n  ]\n}"
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Obtener una ruta por ID",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/rutas/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"rutas",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "2601"
+												}
+											]
+										},
+										"description": "Devuelve toda la información de una ruta a partir de su identificador interno."
+									},
+									"response": [
+										{
+											"name": "Ruta encontrada",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:8080/api/rutas/:id",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"api",
+														"rutas",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 7,\n  \"fecha\": \"2025-11-10\",\n  \"vehiculoId\": 3,\n  \"enviosIds\": [\n    10,\n    11,\n    15\n  ]\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Listar rutas (con filtro opcional por fecha)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/rutas?fecha=2025-11-10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"rutas"
+									],
+									"query": [
+										{
+											"key": "fecha",
+											"value": "2025-11-10",
+											"description": "Fecha de la ruta a filtrar. Si se omite, se listan todas las rutas."
+										}
+									]
+								},
+								"description": "Devuelve el listado de rutas registradas.\nSi se envía el parámetro 'fecha', solo devuelve las rutas correspondientes a ese día.\nSi no se envía, devuelve todas las rutas.\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/rutas?fecha=2025-11-10",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"rutas"
+											],
+											"query": [
+												{
+													"key": "fecha",
+													"value": "2025-11-10",
+													"description": "Fecha de la ruta a filtrar. Si se omite, se listan todas las rutas."
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": 7,\n    \"fecha\": \"2025-11-10\",\n    \"vehiculoId\": 3,\n    \"enviosIds\": [\n      10,\n      11,\n      15\n    ]\n  },\n  {\n    \"id\": 7,\n    \"fecha\": \"2025-11-10\",\n    \"vehiculoId\": 3,\n    \"enviosIds\": [\n      10,\n      11,\n      15\n    ]\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Crear ruta",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"fecha\": \"2025-11-20\",\n  \"vehiculoPatente\": \"CC333CC\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/rutas",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"rutas"
+									]
+								},
+								"description": "Crea una ruta logística para una fecha y un vehículo (identificado por su patente).\nLa ruta representa el recorrido que hará un vehículo en un día determinado.\nNo es obligatorio asignar envíos en este momento: pueden agregarse más adelante.\n"
+							},
+							"response": [
+								{
+									"name": "Ruta creada correctamente",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"fecha\": \"2025-11-20\",\n  \"vehiculoPatente\": \"CC333CC\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/rutas",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"rutas"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 7,\n  \"fecha\": \"2025-11-10\",\n  \"vehiculoId\": 3,\n  \"enviosIds\": [\n    10,\n    11,\n    15\n  ]\n}"
+								},
+								{
+									"name": "Datos inválidos o fecha/patente mal informadas",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"fecha\": \"2025-11-20\",\n  \"vehiculoPatente\": \"CC333CC\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/rutas",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"rutas"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ya existe una ruta para ese vehículo en la fecha indicada",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"fecha\": \"2025-11-20\",\n  \"vehiculoPatente\": \"CC333CC\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/rutas",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"rutas"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Endpoints para crear y gestionar rutas diarias asociadas a un vehículo.  \n  \nPermite asignar/quitar envíos a la ruta y consultar qué envíos tiene una ruta en una fecha determinada, validando capacidad y refrigeración."
+				},
+				{
+					"name": "paquetes",
+					"item": [
+						{
+							"name": "Buscar paquetes con filtros opcionales",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/paquetes?tipo=FRAGIL&pesoMin=7359.24934694679&pesoMax=7359.24934694679&volMin=7359.24934694679&volMax=7359.24934694679",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"paquetes"
+									],
+									"query": [
+										{
+											"key": "tipo",
+											"value": "FRAGIL",
+											"description": "Tipo de paquete (FRAGIL | REFRIGERADO). Si se omite, trae todos."
+										},
+										{
+											"key": "pesoMin",
+											"value": "7359.24934694679",
+											"description": "Peso mínimo en kg (incluido)."
+										},
+										{
+											"key": "pesoMax",
+											"value": "7359.24934694679",
+											"description": "Peso máximo en kg (incluido)."
+										},
+										{
+											"key": "volMin",
+											"value": "7359.24934694679",
+											"description": "Volumen mínimo en dm3 (incluido)."
+										},
+										{
+											"key": "volMax",
+											"value": "7359.24934694679",
+											"description": "Volumen máximo en dm3 (incluido)."
+										}
+									]
+								},
+								"description": "Permite consultar los paquetes registrados aplicando filtros opcionales.\n\nParámetros soportados:\n- tipo: FRAGIL | REFRIGERADO (si se omite, se devuelven ambos tipos).\n- pesoMin / pesoMax: rango de peso en kg (incluye los extremos).\n- volMin / volMax: rango de volumen en dm³ (incluye los extremos).\n\nSi no se envía ningún parámetro, devuelve todos los paquetes.\n"
+							},
+							"response": [
+								{
+									"name": "Listado de paquetes que cumplen los filtros indicados",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/paquetes?tipo=FRAGIL&pesoMin=7359.24934694679&pesoMax=7359.24934694679&volMin=7359.24934694679&volMax=7359.24934694679",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"paquetes"
+											],
+											"query": [
+												{
+													"key": "tipo",
+													"value": "FRAGIL",
+													"description": "Tipo de paquete (FRAGIL | REFRIGERADO). Si se omite, trae todos."
+												},
+												{
+													"key": "pesoMin",
+													"value": "7359.24934694679",
+													"description": "Peso mínimo en kg (incluido)."
+												},
+												{
+													"key": "pesoMax",
+													"value": "7359.24934694679",
+													"description": "Peso máximo en kg (incluido)."
+												},
+												{
+													"key": "volMin",
+													"value": "7359.24934694679",
+													"description": "Volumen mínimo en dm3 (incluido)."
+												},
+												{
+													"key": "volMax",
+													"value": "7359.24934694679",
+													"description": "Volumen máximo en dm3 (incluido)."
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": 10,\n    \"codigo\": \"PK-001\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5,\n    \"envioId\": 20\n  },\n  {\n    \"id\": 10,\n    \"codigo\": \"PK-001\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5,\n    \"envioId\": 20\n  }\n]"
+								},
+								{
+									"name": "Parámetros inconsistentes (por ejemplo, pesoMin mayor que pesoMax)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/paquetes?tipo=FRAGIL&pesoMin=7359.24934694679&pesoMax=7359.24934694679&volMin=7359.24934694679&volMax=7359.24934694679",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"paquetes"
+											],
+											"query": [
+												{
+													"key": "tipo",
+													"value": "FRAGIL",
+													"description": "Tipo de paquete (FRAGIL | REFRIGERADO). Si se omite, trae todos."
+												},
+												{
+													"key": "pesoMin",
+													"value": "7359.24934694679",
+													"description": "Peso mínimo en kg (incluido)."
+												},
+												{
+													"key": "pesoMax",
+													"value": "7359.24934694679",
+													"description": "Peso máximo en kg (incluido)."
+												},
+												{
+													"key": "volMin",
+													"value": "7359.24934694679",
+													"description": "Volumen mínimo en dm3 (incluido)."
+												},
+												{
+													"key": "volMax",
+													"value": "7359.24934694679",
+													"description": "Volumen máximo en dm3 (incluido)."
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Crear uno o varios paquetes",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  {\n    \"codigo\": \"PK-025\",\n    \"type\": \"string\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5\n  },\n  {\n    \"codigo\": \"PK-025\",\n    \"type\": \"string\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5\n  }\n]",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/paquetes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"paquetes"
+									]
+								},
+								"description": "Registra paquetes frágiles o refrigerados en el sistema.\n\nEl cuerpo de la petición es un arreglo (lista) de objetos donde cada elemento indica su tipo:\n- type = \"FRAGIL\"        → se interpreta como PaqueteFragilCreateDTO\n- type = \"REFRIGERADO\"   → se interpreta como PaqueteRefrigeradoCreateDTO\n\nCada paquete debe incluir:\n- un código único (por ejemplo, en los datos de demo se usan prefijos \"PF-\" para frágiles y \"PR-\" para refrigerados),\n- peso en kg,\n- volumen en dm³\ny, según el tipo, los campos adicionales correspondientes.\n\nLos códigos de paquete que se crean aquí luego se utilizan para armar envíos desde el endpoint de Envíos.\n"
+							},
+							"response": [
+								{
+									"name": "Paquetes creados correctamente",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "[\n  {\n    \"codigo\": \"PK-025\",\n    \"type\": \"string\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5\n  },\n  {\n    \"codigo\": \"PK-025\",\n    \"type\": \"string\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5\n  }\n]",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/paquetes",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"paquetes"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": 10,\n    \"codigo\": \"PK-001\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5,\n    \"envioId\": 20\n  },\n  {\n    \"id\": 10,\n    \"codigo\": \"PK-001\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5,\n    \"envioId\": 20\n  }\n]"
+								},
+								{
+									"name": "Datos inválidos en uno o más paquetes (códigos repetidos, pesos/volúmenes inválidos, etc.)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "[\n  {\n    \"codigo\": \"PK-025\",\n    \"type\": \"string\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5\n  },\n  {\n    \"codigo\": \"PK-025\",\n    \"type\": \"string\",\n    \"pesoKg\": 2.5,\n    \"volumenDm3\": 5\n  }\n]",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/paquetes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"paquetes"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Endpoints para dar de alta paquetes frágiles y refrigerados y consultarlos con filtros por tipo, peso y volumen.  \n  \nConvención usada en los datos de ejemplo:\n\n- `PF-...` → paquetes frágiles\n    \n- `PR-...` → paquetes refrigerados"
+				},
+				{
+					"name": "envios",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "entrega",
+									"item": [
+										{
+											"name": "Marcar entrega con comprobante (Base64 de PDF/JPG)",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"comprobanteBase64\": \"iVBORw0KGgoAAAANSUhEUgAA...\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/:id/entrega",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														":id",
+														"entrega"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Marca el envío como ENTREGADO y guarda el comprobante asociado.\n\nEl comprobante se envía en formato Base64 (por ejemplo, una imagen JPG o un PDF),\nse decodifica en el servidor y se almacena de forma asociada al envío.\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"comprobanteBase64\": \"iVBORw0KGgoAAAANSUhEUgAA...\"\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "http://localhost:8080/api/envios/:id/entrega",
+															"protocol": "http",
+															"host": [
+																"localhost"
+															],
+															"port": "8080",
+															"path": [
+																"api",
+																"envios",
+																":id",
+																"entrega"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "cancelar",
+									"item": [
+										{
+											"name": "Cancelar un envío",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"motivo\": \"Cliente solicitó cancelar el envío\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/:id/cancelar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														":id",
+														"cancelar"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Cancela un envío que todavía no ha sido entregado.\nSe puede enviar un motivo opcional que quedará registrado en el historial.\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"motivo\": \"Cliente solicitó cancelar el envío\"\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "http://localhost:8080/api/envios/:id/cancelar",
+															"protocol": "http",
+															"host": [
+																"localhost"
+															],
+															"port": "8080",
+															"path": [
+																"api",
+																"envios",
+																":id",
+																"cancelar"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "almacen",
+									"item": [
+										{
+											"name": "Registrar ingreso del envío a almacén",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/:id/almacen",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														":id",
+														"almacen"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Marca el envío como EN_ALMACEN a partir de su estado actual GENERADO.\n\nUso típico:\n- Luego de crear el envío (estado GENERADO),\n  el operador registra el ingreso físico al almacén\n  mediante este endpoint.\n\nSi el envío no está en estado GENERADO, se devolverá un error\nde negocio (no se permite la transición).\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"url": {
+															"raw": "http://localhost:8080/api/envios/:id/almacen",
+															"protocol": "http",
+															"host": [
+																"localhost"
+															],
+															"port": "8080",
+															"path": [
+																"api",
+																"envios",
+																":id",
+																"almacen"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "estado",
+									"item": [
+										{
+											"name": "Actualizar estado de un envío (flujo normal, sin ENTREGADO ni CANCELADO)",
+											"request": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nuevoEstado\": \"EN_ALMACEN\",\n  \"observacion\": \"Ingreso a depósito\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/:id/estado",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														":id",
+														"estado"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Cambia el estado del envío según el flujo permitido:\n- GENERADO → EN_ALMACEN\n- EN_ALMACEN → EN_RUTA\n- EN_RUTA → DEVUELTO\n\nPara ENTREGADO use /{id}/entrega.\nPara CANCELADO use /{id}/cancelar.\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "PATCH",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"nuevoEstado\": \"EN_ALMACEN\",\n  \"observacion\": \"Ingreso a depósito\"\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/envios/:id/estado",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"envios",
+																":id",
+																"estado"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "historial",
+									"item": [
+										{
+											"name": "Listar historial de un envío por ID",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/:id/historial",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														":id",
+														"historial"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "2601"
+														}
+													]
+												},
+												"description": "Devuelve la traza completa de cambios de estado del envío, ordenada cronológicamente.\nEsto permite auditar el recorrido de un envío desde que se genera hasta su entrega o cancelación.\n"
+											},
+											"response": [
+												{
+													"name": "OK",
+													"originalRequest": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "*/*"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/envios/:id/historial",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"envios",
+																":id",
+																"historial"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "*/*"
+														}
+													],
+													"cookie": [],
+													"body": "[\n  {\n    \"id\": 501,\n    \"envioId\": 12,\n    \"estadoAnterior\": \"EN_ALMACEN\",\n    \"estadoNuevo\": \"EN_RUTA\",\n    \"fechaHora\": \"2025-11-10T09:15:00\",\n    \"observacion\": \"Salida del centro logístico\"\n  },\n  {\n    \"id\": 501,\n    \"envioId\": 12,\n    \"estadoAnterior\": \"EN_ALMACEN\",\n    \"estadoNuevo\": \"EN_RUTA\",\n    \"fechaHora\": \"2025-11-10T09:15:00\",\n    \"observacion\": \"Salida del centro logístico\"\n  }\n]"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "Obtener un envío por ID",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/envios/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"envios",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "2601"
+												}
+											]
+										},
+										"description": "Devuelve la información completa de un envío a partir de su identificador interno."
+									},
+									"response": [
+										{
+											"name": "Envío encontrado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "seguimiento",
+							"item": [
+								{
+									"name": "Buscar un envío por código de tracking (incluye historial)",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/envios/seguimiento?tracking=ICG-AB12CD34EF56",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"envios",
+												"seguimiento"
+											],
+											"query": [
+												{
+													"key": "tracking",
+													"value": "ICG-AB12CD34EF56",
+													"description": "Código de seguimiento entregado al cliente"
+												}
+											]
+										},
+										"description": "Permite consultar un envío a partir del código de seguimiento público\nque se entrega al cliente final (por ejemplo: ICG-AB12CD34EF56).\n\nLa respuesta incluye tanto los datos del envío como toda la traza de cambios de estado\n(historial cronológico).\n"
+									},
+									"response": [
+										{
+											"name": "Envío encontrado para el código de tracking indicado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/envios/seguimiento?tracking=ICG-AB12CD34EF56",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"envios",
+														"seguimiento"
+													],
+													"query": [
+														{
+															"key": "tracking",
+															"value": "ICG-AB12CD34EF56",
+															"description": "Código de seguimiento entregado al cliente"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true,\n  \"historial\": [\n    {\n      \"id\": 501,\n      \"envioId\": 12,\n      \"estadoAnterior\": \"EN_ALMACEN\",\n      \"estadoNuevo\": \"EN_RUTA\",\n      \"fechaHora\": \"2025-11-10T09:15:00\",\n      \"observacion\": \"Salida del centro logístico\"\n    },\n    {\n      \"id\": 501,\n      \"envioId\": 12,\n      \"estadoAnterior\": \"EN_ALMACEN\",\n      \"estadoNuevo\": \"EN_RUTA\",\n      \"fechaHora\": \"2025-11-10T09:15:00\",\n      \"observacion\": \"Salida del centro logístico\"\n    }\n  ]\n}"
+										}
+									]
+								}
+							],
+							"description": "Endpoint pensado para el cliente final:  \n  \npermite consultar el estado actual y todo el historial del envío a partir del código de seguimiento público (PGM`-...`)."
+						},
+						{
+							"name": "Consulta unificada de envíos",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/envios?remitenteDocumento=20123456789&destinatarioDocumento=20987654321&estado=EN_RUTA",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"envios"
+									],
+									"query": [
+										{
+											"key": "remitenteDocumento",
+											"value": "20123456789",
+											"description": "Documento/CUIT del remitente ya registrado"
+										},
+										{
+											"key": "destinatarioDocumento",
+											"value": "20987654321",
+											"description": "Documento/CUIT del destinatario ya registrado"
+										},
+										{
+											"key": "estado",
+											"value": "EN_RUTA",
+											"description": "Estado del envío"
+										}
+									]
+								},
+								"description": "Permite listar envíos aplicando filtros opcionales sobre:\n\n- documento/CUIT del remitente\n- documento/CUIT del destinatario\n- estado actual del envío\n\nSi no se envía ningún parámetro, devuelve todos los envíos.\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/envios?remitenteDocumento=20123456789&destinatarioDocumento=20987654321&estado=EN_RUTA",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"envios"
+											],
+											"query": [
+												{
+													"key": "remitenteDocumento",
+													"value": "20123456789",
+													"description": "Documento/CUIT del remitente ya registrado"
+												},
+												{
+													"key": "destinatarioDocumento",
+													"value": "20987654321",
+													"description": "Documento/CUIT del destinatario ya registrado"
+												},
+												{
+													"key": "estado",
+													"value": "EN_RUTA",
+													"description": "Estado del envío"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": 100,\n    \"remitenteId\": 1,\n    \"destinatarioId\": 2,\n    \"remitenteDocumento\": \"string\",\n    \"destinatarioDocumento\": \"string\",\n    \"direccionEntrega\": \"Av. Sarmiento 123\",\n    \"codigoPostal\": \"string\",\n    \"estadoActual\": \"EN_RUTA\",\n    \"rutaId\": 5,\n    \"paquetes\": [\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      },\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      }\n    ],\n    \"trackingCode\": \"PGM-AB12CD34EF56\",\n    \"requiereFrio\": true,\n    \"hasComprobante\": true\n  },\n  {\n    \"id\": 100,\n    \"remitenteId\": 1,\n    \"destinatarioId\": 2,\n    \"remitenteDocumento\": \"string\",\n    \"destinatarioDocumento\": \"string\",\n    \"direccionEntrega\": \"Av. Sarmiento 123\",\n    \"codigoPostal\": \"string\",\n    \"estadoActual\": \"EN_RUTA\",\n    \"rutaId\": 5,\n    \"paquetes\": [\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      },\n      {\n        \"id\": 10,\n        \"codigo\": \"PK-001\",\n        \"pesoKg\": 2.5,\n        \"volumenDm3\": 5,\n        \"envioId\": 20\n      }\n    ],\n    \"trackingCode\": \"PGM-AB12CD34EF56\",\n    \"requiereFrio\": true,\n    \"hasComprobante\": true\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Crear un envío",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"remitenteDocumento\": \"30700000022\",\n  \"destinatarioDocumento\": \"30222222\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"4600\",\n  \"codigosPaquete\": [\n    \"PF-001\",\n    \"PF-002\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/envios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"envios"
+									]
+								},
+								"description": "Crea un nuevo envío a partir de:\n\n- Un remitente y un destinatario ya registrados en el sistema, identificados por su documento/CUIT.\n- Una lista de códigos de paquete ya cargados previamente mediante el módulo de Paquetes.\n\nPor convención, en los datos de ejemplo:\n- Los paquetes frágiles tienen códigos que comienzan con \"PF-\" (por ejemplo: PF-001, PF-010).\n- Los paquetes refrigerados tienen códigos que comienzan con \"PR-\" (por ejemplo: PR-001, PR-005).\n\nEl envío queda inicialmente en estado GENERADO y se le asigna un código de seguimiento público\n(por ejemplo: ICG-AB12CD34EF56) que luego puede utilizar el cliente final para consultar el estado.\n"
+							},
+							"response": [
+								{
+									"name": "Envío solo con paquetes frágiles",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"remitenteDocumento\": \"30700000022\",\n  \"destinatarioDocumento\": \"30222222\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"4600\",\n  \"codigosPaquete\": [\n    \"PF-001\",\n    \"PF-002\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/envios",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"envios"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+								},
+								{
+									"name": "Envío mixto (frágil + refrigerado)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"remitenteDocumento\": \"30700000022\",\n  \"destinatarioDocumento\": \"20388888\",\n  \"direccionEntrega\": \"Belgrano 450\",\n  \"codigoPostal\": \"4600\",\n  \"codigosPaquete\": [\n    \"PF-003\",\n    \"PR-021\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/envios",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"envios"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 100,\n  \"remitenteId\": 1,\n  \"destinatarioId\": 2,\n  \"remitenteDocumento\": \"string\",\n  \"destinatarioDocumento\": \"string\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"string\",\n  \"estadoActual\": \"EN_RUTA\",\n  \"rutaId\": 5,\n  \"paquetes\": [\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    },\n    {\n      \"id\": 10,\n      \"codigo\": \"PK-001\",\n      \"pesoKg\": 2.5,\n      \"volumenDm3\": 5,\n      \"envioId\": 20\n    }\n  ],\n  \"trackingCode\": \"PGM-AB12CD34EF56\",\n  \"requiereFrio\": true,\n  \"hasComprobante\": true\n}"
+								},
+								{
+									"name": "Datos inválidos (documentos inexistentes, códigos de paquete inexistentes, lista vacía, etc.)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"remitenteDocumento\": \"30700000022\",\n  \"destinatarioDocumento\": \"30222222\",\n  \"direccionEntrega\": \"Av. Sarmiento 123\",\n  \"codigoPostal\": \"4600\",\n  \"codigosPaquete\": [\n    \"PF-001\",\n    \"PF-002\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/envios",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"envios"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Endpoints para crear envíos a partir de:\n\n- remitente/destinatario existentes (por documento/CUIT)\n    \n- paquetes existentes (por código PF/PR)\n    \n\nTambién permite:\n\n- consultar por ID\n    \n- buscar por filtros (remitente, destinatario, estado)\n    \n- cambiar estados (almacén, ruta, devuelto)\n    \n- marcar entrega con comprobante (Base64)\n    \n- cancelar envíos"
+				}
+			],
+			"description": "API para gestionar clientes, vehículos, paquetes y envíos de una empresa de logística.\n\nIncluye creación de envíos, seguimiento por código de tracking y validaciones de capacidad/refrigeración en rutas."
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}

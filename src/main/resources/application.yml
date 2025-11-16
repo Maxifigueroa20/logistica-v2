@@ -1,0 +1,39 @@
+app:
+  demo: true
+springdoc:
+  api-docs:
+    enabled: true              # asegura el endpoint /v3/api-docs
+  packages-to-scan: ar.edu.unju.fi.logistica.controller  # <-- ajusta al package real de tus controllers
+  paths-to-match: /api/**
+  paths-to-exclude: /error
+
+logging:
+  level:
+    org.springdoc: DEBUG
+
+spring:
+  application:
+      name: logistica
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/logistica?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: devuser
+    password: devpass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update   # En prod: validate/none + migraciones
+    show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.format_sql: false
+#  h2 console config removed (switched to MySQL)
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

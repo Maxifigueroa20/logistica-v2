@@ -1,0 +1,6 @@
+CREATE DATABASE IF NOT EXISTS logistica CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE DATABASE IF NOT EXISTS logistica_test CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE USER IF NOT EXISTS 'devuser'@'%' IDENTIFIED BY 'devpass';
+GRANT ALL PRIVILEGES ON logistica.* TO 'devuser'@'%';
+GRANT ALL PRIVILEGES ON logistica_test.* TO 'devuser'@'%';
+FLUSH PRIVILEGES;

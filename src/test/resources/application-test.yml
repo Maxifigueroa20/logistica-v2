@@ -1,0 +1,20 @@
+# Configuración específica para el perfil 'test'
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/logistica_test?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: devuser
+    password: devpass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    # 1. Configuración de Hibernate DDL (dentro de jpa)
+    hibernate:
+      ddl-auto: create-drop # crea y borra la BD por cada test
+    
+    # 2. Mostrar SQL (dentro de jpa)
+    show-sql: true
+    
+    # 3. Todas las propiedades extra van aquí, ¡una sola vez!
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.format_sql: true # <-- ¡Esta línea es la que se movió!
