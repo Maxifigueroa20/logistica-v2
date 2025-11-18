@@ -51,7 +51,7 @@ public class PaqueteController {
 			@ApiResponse(responseCode = "200", description = "Paquetes creados correctamente", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PaqueteDTO.class)))),
 			@ApiResponse(responseCode = "400", description = "Datos inválidos en uno o más paquetes (códigos repetidos, pesos/volúmenes inválidos, etc.)", content = @Content) })
 	@PostMapping
-	public ResponseEntity<List<PaqueteDTO>> crearLote(@Valid @RequestBody List<PaqueteCreateDTO> dtos) {
+	public ResponseEntity<List<PaqueteDTO>> crearLote(@RequestBody List<PaqueteCreateDTO> dtos) {
 		log.info("[API][Paquetes] POST /api/paquetes → cantidad={}", dtos != null ? dtos.size() : 0);
 
 		var creados = paqueteService.crearLote(dtos);
