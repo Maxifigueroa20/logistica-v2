@@ -30,9 +30,9 @@ public enum EstadoEnvio {
     CANCELADO;
 
     /* Defaults: cuando la transición no aplica desde el estado actual */
-    public EstadoEnvio aAlmacen() { throw new EnvioException("Transición no permitida"); }
-    public EstadoEnvio aRuta() { throw new EnvioException("Transición no permitida"); }
-    public EstadoEnvio aEntregado(byte[] comprobante) { throw new EnvioException("Transición no permitida"); }
-    public EstadoEnvio cancelar(String motivo) { throw new EnvioException("Transición no permitida"); }
-    public EstadoEnvio devolver(String observacion) { throw new EnvioException("Transición no permitida"); }
+    public EstadoEnvio aAlmacen() { throw new EnvioException("No se puede pasar de " + this + " a EN_ALMACEN"); }
+    public EstadoEnvio aRuta() { throw new EnvioException("No se puede pasar de " + this + " a EN_RUTA"); }
+    public EstadoEnvio aEntregado(byte[] comprobante) { throw new EnvioException("No se puede pasar de " + this + " a ENTREGADO"); }
+    public EstadoEnvio cancelar(String motivo) { throw new EnvioException("No se puede pasar de " + this + " a CANCELADO"); }
+    public EstadoEnvio devolver(String observacion) { throw new EnvioException("No se puede pasar de " + this + " a DEVUELTO"); }
 }

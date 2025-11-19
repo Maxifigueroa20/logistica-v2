@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.logistica.service.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.unju.fi.logistica.domain.Envio;
-import ar.edu.unju.fi.logistica.domain.Paquete;
 import ar.edu.unju.fi.logistica.domain.PaqueteRefrigerado;
 import ar.edu.unju.fi.logistica.domain.Ruta;
 import ar.edu.unju.fi.logistica.domain.Vehiculo;
@@ -156,17 +156,28 @@ public class RutaServiceImpl implements RutaService {
 	 * un envío a la ruta.
 	 */
 	private void validarCompatibilidadYCapacidad(Ruta ruta, Vehiculo v, Envio e) {
-		double pesoRuta = ruta.getEnvios().stream().flatMap(en -> en.getPaquetes().stream())
-				.mapToDouble(Paquete::getPesoKg).sum();
+		BigDecimal pesoRuta = ruta.getEnvios().stream()
+	            .flatMap(env -> env.getPaquetes().stream())
+	            .map(p -> p.getPesoKg() != null ? p.getPesoKg() : BigDecimal.ZERO)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		double volRuta = ruta.getEnvios().stream().flatMap(en -> en.getPaquetes().stream())
-				.mapToDouble(Paquete::getVolumenDm3).sum();
+	    BigDecimal volRuta = ruta.getEnvios().stream()
+	            .flatMap(env -> env.getPaquetes().stream())
+	            .map(p -> p.getVolumenDm3() != null ? p.getVolumenDm3() : BigDecimal.ZERO)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		double pesoEnvio = e.getPaquetes().stream().mapToDouble(Paquete::getPesoKg).sum();
+	    BigDecimal pesoEnvio = e.getPaquetes().stream()
+	            .map(p -> p.getPesoKg() != null ? p.getPesoKg() : BigDecimal.ZERO)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		double volEnvio = e.getPaquetes().stream().mapToDouble(Paquete::getVolumenDm3).sum();
+	    BigDecimal volEnvio = e.getPaquetes().stream()
+	            .map(p -> p.getVolumenDm3() != null ? p.getVolumenDm3() : BigDecimal.ZERO)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		if (pesoRuta + pesoEnvio > v.getCapacidadPesoKg() || volRuta + volEnvio > v.getCapacidadVolumenDm3()) {
+		BigDecimal capPeso = v.getCapacidadPesoKg() != null ? v.getCapacidadPesoKg() : BigDecimal.ZERO;
+		BigDecimal capVol = v.getCapacidadVolumenDm3() != null ? v.getCapacidadVolumenDm3() : BigDecimal.ZERO;
+
+		if (pesoRuta.add(pesoEnvio).compareTo(capPeso) > 0 || volRuta.add(volEnvio).compareTo(capVol) > 0) {
 			throw new RutaException("Se excede la capacidad del vehículo");
 		}
 
@@ -177,13 +188,16 @@ public class RutaServiceImpl implements RutaService {
 				throw new RutaException("El envío requiere vehículo refrigerado");
 			}
 
-			double min = v.getRangoTempMin() != null ? v.getRangoTempMin() : Double.NEGATIVE_INFINITY;
-			double max = v.getRangoTempMax() != null ? v.getRangoTempMax() : Double.POSITIVE_INFINITY;
+			BigDecimal min = v.getRangoTempMin() != null ? v.getRangoTempMin()
+					: BigDecimal.valueOf(Double.NEGATIVE_INFINITY);
+
+			BigDecimal max = v.getRangoTempMax() != null ? v.getRangoTempMax()
+					: BigDecimal.valueOf(Double.POSITIVE_INFINITY);
 
 			boolean ok = e.getPaquetes().stream().filter(PaqueteRefrigerado.class::isInstance)
-					.map(p -> (PaqueteRefrigerado) p).allMatch(pr -> {
-						double t = pr.getTemperaturaObjetivo();
-						return t >= min && t <= max;
+					.map(PaqueteRefrigerado.class::cast).allMatch(pr -> {
+						BigDecimal t = pr.getTemperaturaObjetivo();
+						return t.compareTo(min) >= 0 && t.compareTo(max) <= 0;
 					});
 
 			if (!ok) {

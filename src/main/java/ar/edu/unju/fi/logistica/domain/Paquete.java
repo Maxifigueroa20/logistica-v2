@@ -1,7 +1,11 @@
 package ar.edu.unju.fi.logistica.domain;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter @Setter
@@ -23,12 +27,12 @@ public abstract class Paquete {
     protected String codigo;
 
     @Positive
-    @Column(name = "peso_kg", nullable = false)
-    protected double pesoKg;
+    @Column(name = "peso_kg", precision = 7, scale = 2, nullable = false)
+    protected BigDecimal pesoKg;
 
     @Positive
-    @Column(name = "volumen_dm3", nullable = false)
-    protected double volumenDm3;
+    @Column(name = "volumen_dm3", precision = 7, scale = 2, nullable = false)
+    protected BigDecimal volumenDm3;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "envio_id", nullable = true)

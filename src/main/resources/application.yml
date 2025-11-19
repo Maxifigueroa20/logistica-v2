@@ -1,5 +1,10 @@
 app:
   demo: true
+  mail:
+    from: "gefestudiante2009@gmail.com"     # correo remitente para los mails
+  tracking:
+    base-url: "http://localhost:8080/api/envios/seguimiento?tracking="  # URL base para el link de seguimiento (opcional, solo en GENERADO)
+
 springdoc:
   api-docs:
     enabled: true              # asegura el endpoint /v3/api-docs
@@ -20,9 +25,22 @@ spring:
     username: devuser
     password: devpass
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.gmail.com       # o el SMTP que vayas a usar
+    port: 587
+    username: "gefestudiante2009@gmail.com"   # PONER EN .env / variables de entorno en la vida real
+    password: "nesa ztmb ydfi eeso"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  profiles:
+    active: dev
   jpa:
     hibernate:
-      ddl-auto: create   # En prod: validate/none + migraciones
+      ddl-auto: update   # En prod: validate/none + migraciones
     show-sql: true
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect

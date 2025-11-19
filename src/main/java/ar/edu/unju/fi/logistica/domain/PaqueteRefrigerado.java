@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.logistica.domain;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
@@ -11,14 +13,14 @@ import lombok.*;
 @PrimaryKeyJoinColumn(name = "id")
 public class PaqueteRefrigerado extends Paquete {
 
-    @Column(name = "temperatura_objetivo", nullable = false)
-    private double temperaturaObjetivo;
+    @Column(name = "temperatura_objetivo", precision = 5, scale = 2, nullable = false)
+    private BigDecimal temperaturaObjetivo;
 
-    @Column(name = "rango_min", nullable = false)
-    private double rangoMin;
+    @Column(name = "rango_min", precision = 5, scale = 2, nullable = false)
+    private BigDecimal rangoMin;
 
-    @Column(name = "rango_max", nullable = false)
-    private double rangoMax;
+    @Column(name = "rango_max", precision = 5, scale = 2, nullable = false)
+    private BigDecimal rangoMax;
 
     @PositiveOrZero
     @Column(name = "horas_max_fuera_frio", nullable = false)

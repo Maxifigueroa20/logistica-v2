@@ -18,6 +18,7 @@ import ar.edu.unju.fi.logistica.mapper.EnvioMapper;
 import ar.edu.unju.fi.logistica.repository.ClienteRepository;
 import ar.edu.unju.fi.logistica.repository.EnvioRepository;
 import ar.edu.unju.fi.logistica.repository.PaqueteRepository;
+import ar.edu.unju.fi.logistica.service.EmailService;
 import ar.edu.unju.fi.logistica.service.EnvioService;
 import ar.edu.unju.fi.logistica.service.TrackingCodeService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class EnvioServiceImpl implements EnvioService {
 	private final PaqueteRepository paqueteRepo;
 	private final EnvioMapper envioMapper;
 	private final TrackingCodeService tracking;
+	private final EmailService emailService;
 
 	@Override
 	@Transactional
@@ -60,6 +62,13 @@ public class EnvioServiceImpl implements EnvioService {
 
 		EnvioDTO out = envioMapper.toDTO(envio, trackingData.publicCode());
 		log.info("[Envio] Creado id={} tracking={}", out.getId(), out.getTrackingCode());
+		
+		try {
+	        emailService.enviarEnvioRegistrado(envio, trackingData.publicCode());
+	    } catch (Exception ex) {
+	        log.error("[Envio] Error enviando mail de alta para envio id={}: {}", envio.getId(), ex.getMessage(), ex);
+	    }
+		
 		return out;
 	}
 
@@ -87,6 +96,13 @@ public class EnvioServiceImpl implements EnvioService {
 		EnvioDTO dto = envioMapper.toDTO(envio, null);
 		log.info("[Envio] Entregado id={} estado={} hasComprobante={}", dto.getId(), dto.getEstadoActual(),
 				dto.isHasComprobante());
+		
+		try {
+	        emailService.enviarEnvioEntregado(envio);
+	    } catch (Exception ex) {
+	        log.error("[Envio] Error enviando mail de entrega para envio id={}: {}", envio.getId(), ex.getMessage(), ex);
+	    }
+		
 		return dto;
 	}
 
@@ -120,17 +136,13 @@ public class EnvioServiceImpl implements EnvioService {
 
 	@Override
 	public List<EnvioDTO> buscarFiltrado(String remitenteDocumento, String destinatarioDocumento, EstadoEnvio estado) {
-		String remDoc = normalize(remitenteDocumento);
-		String desDoc = normalize(destinatarioDocumento);
-
-		log.debug("[Envio] Buscar filtrado → remitenteDoc='{}', destinatarioDoc='{}', estado={}", remDoc, desDoc,
+		log.debug("[Envio] Buscar filtrado → remitenteDoc='{}', destinatarioDoc='{}', estado={}", remitenteDocumento, destinatarioDocumento,
 				estado);
+		
+		Cliente remitente = buscarClientePorDocumento(remitenteDocumento, "Remitente no encontrado");
+		Cliente destinatario = buscarClientePorDocumento(destinatarioDocumento, "Destinatario no encontrado");
 
-		return envioRepo.findAll().stream()
-				.filter(e -> remDoc == null || remDoc.equals(e.getRemitente().getDocumentoCuit()))
-				.filter(e -> desDoc == null || desDoc.equals(e.getDestinatario().getDocumentoCuit()))
-				.filter(e -> estado == null || e.getEstadoActual() == estado).map(e -> envioMapper.toDTO(e, null))
-				.toList();
+		return envioRepo.buscarFiltrado(remitente.getId(), destinatario.getId(), estado).stream().map(envioMapper::toDTO).toList();
 	}
 
 	@Override

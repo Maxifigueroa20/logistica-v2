@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.logistica.domain;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,9 @@ import java.util.List;
 import ar.edu.unju.fi.logistica.enums.EstadoEnvio;
 import ar.edu.unju.fi.logistica.exception.EnvioException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter @Setter
@@ -146,12 +149,14 @@ public class Envio {
 		h.setEnvio(this);
 	}
 
-	public double getPesoTotal() {
-		return paquetes.stream().mapToDouble(Paquete::getPesoKg).sum();
+	public BigDecimal getPesoTotal() {
+		return paquetes.stream().map(p -> p.getPesoKg() != null ? p.getPesoKg() : BigDecimal.ZERO)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
-	public double getVolumenTotal() {
-		return paquetes.stream().mapToDouble(Paquete::getVolumenDm3).sum();
+	public BigDecimal getVolumenTotal() {
+		return paquetes.stream().map(p -> p.getVolumenDm3() != null ? p.getVolumenDm3() : BigDecimal.ZERO)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 	/** Derivado: true si hay al menos un paquete refrigerado */

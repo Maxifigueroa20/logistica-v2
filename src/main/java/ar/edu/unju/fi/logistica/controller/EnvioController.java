@@ -56,7 +56,7 @@ public class EnvioController {
 			- Los paquetes refrigerados tienen códigos que comienzan con "PR-" (por ejemplo: PR-001, PR-005).
 
 			El envío queda inicialmente en estado GENERADO y se le asigna un código de seguimiento público
-			(por ejemplo: ICG-AB12CD34EF56) que luego puede utilizar el cliente final para consultar el estado.
+			(por ejemplo: PGM-AB12CD34EF56) que luego puede utilizar el cliente final para consultar el estado.
 			""", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = EnvioCreateDTO.class), examples = {
 			@ExampleObject(name = "Envío solo con paquetes frágiles", value = """
 					{
@@ -97,11 +97,11 @@ public class EnvioController {
 
 	@Operation(summary = "Buscar un envío por código de tracking (incluye historial)", description = """
 			Permite consultar un envío a partir del código de seguimiento público
-			que se entrega al cliente final (por ejemplo: ICG-AB12CD34EF56).
+			que se entrega al cliente final (por ejemplo: PGM-AB12CD34EF56).
 
 			La respuesta incluye tanto los datos del envío como toda la traza de cambios de estado
 			(historial cronológico).
-			""", parameters = @Parameter(name = "tracking", example = "ICG-AB12CD34EF56", description = "Código de seguimiento entregado al cliente"))
+			""", parameters = @Parameter(name = "tracking", example = "PGM-AB12CD34EF56", description = "Código de seguimiento entregado al cliente"))
 	@ApiResponse(responseCode = "200", description = "Envío encontrado para el código de tracking indicado", content = @Content(schema = @Schema(implementation = EnvioHistorialDTO.class)))
 	@GetMapping(path = "/seguimiento", params = "tracking")
 	public ResponseEntity<EnvioHistorialDTO> buscarPorTracking(@RequestParam String tracking) {

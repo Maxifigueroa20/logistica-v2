@@ -1,0 +1,32 @@
+stages:
+  - build
+  - test
+  - sonarqube
+
+image: maven:3.9.6-eclipse-temurin-21
+
+cache:
+  paths:
+    - .m2/repository
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+build:
+  stage: build
+  script:
+    - mvn -B clean compile
+
+test:
+  stage: test
+  script:
+    - mvn -B test
+
+sonarqube-check:
+  stage: sonarqube
+  script:
+    - mvn -B verify sonar:sonar -Dsonar.projectKey="$SONAR_PROJECT_KEY" -Dsonar.organization="$SONAR_ORG" -Dsonar.host.url="$SONAR_HOST_URL" -Dsonar.login="$SONAR_TOKEN"  
+  only:
+    - main
+    - develop/main
+    - merge_requests

@@ -18,3 +18,8 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
       hibernate.format_sql: true # <-- ¡Esta línea es la que se movió!
+  mail:
+    host: localhost
+    port: 2525
+    username: "test"
+    password: "test"
